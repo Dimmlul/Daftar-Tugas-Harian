@@ -30,13 +30,13 @@ php artisan migrate
 ```
 
 ## 6. Seed Database
-Untuk menambahkan data contoh (seed) ke dalam database:
+Untuk menambahkan data contoh (seed) ke dalam database
 ```bash
 php artisan db:seed
 ```
 
 ## 7. Jalankan Server
-Untuk menjalankan aplikasi di localhost pada port 8000:
+Untuk menjalankan aplikasi di localhost pada port 8000
 ```bash
 php artisan serve
 ```
