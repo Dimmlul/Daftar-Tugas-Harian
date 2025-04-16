@@ -1,5 +1,3 @@
----
-
 # Laravel Project Setup
 
 ## 1. Clone Repository
