@@ -7,63 +7,103 @@ use Illuminate\Http\Request;
 
 class TugasController extends Controller
 {
-    // Display a listing of the tasks
-    public function index()
+    // Fungsi ini untuk menampilkan semua tugas dengan filter opsional berdasarkan status
+    public function index(Request $request)
     {
-        $tugas = Tugas::orderBy('deadline', 'asc')->get();
-        return view('tugas.index', compact('tugas'));
+        // Mengambil status filter dari request, jika tidak ada maka default 'all'
+        $statusFilter = $request->get('status_filter', 'all');
+
+        // Query tugas berdasarkan filter status
+        if ($statusFilter == 'all') {
+            // Jika status filter 'all', ambil semua tugas
+            $tugas = Tugas::orderBy('deadline', 'asc')->get();
+        } else {
+            // Jika ada filter status, ambil tugas berdasarkan status yang dipilih
+            $tugas = Tugas::where('status', $statusFilter)->orderBy('deadline', 'asc')->get();
+        }
+
+        // Hitung progress, berapa persen tugas yang sudah selesai
+        $totalTasks = Tugas::count(); // Total tugas
+        $completedTasks = Tugas::where('status', 'selesai')->count(); // Tugas yang sudah selesai
+        $progress = $totalTasks > 0 ? ($completedTasks / $totalTasks) * 100 : 0; // Menghitung persentase tugas selesai
+
+        // Mengirim data tugas, progress, dan statusFilter ke view
+        return view('tugas.index', compact('tugas', 'progress', 'statusFilter'));
     }
 
-    // Show the form for creating a new task
+    // Menampilkan form untuk menambah tugas baru
     public function create()
     {
+        // Mengembalikan tampilan form untuk tambah tugas baru
         return view('tugas.create');
     }
 
-    // Store a newly created task in storage
+    // Menyimpan tugas baru ke database
     public function store(Request $request)
     {
-        // Validate input data
+        // Validasi inputan dari form
         $validated = $request->validate([
-            'judul_tugas' => 'required|string|max:255',
-            'deadline' => 'required|date',
-            'status' => 'required|in:belum,selesai',
+            'judul_tugas' => 'required|string|max:32', // Judul tugas wajib diisi
+            'deskripsi' => 'nullable|string|max:64', // Deskripsi opsional
+            'deadline' => 'required|date', // Deadline tugas wajib diisi
+            'status' => 'required|in:belum,selesai', // Status tugas wajib dipilih
         ]);
 
-        // Create a new task
+        // Menyimpan data tugas baru ke database
         Tugas::create($validated);
 
-        // Redirect to the task index
+        // Redirect ke halaman daftar tugas setelah berhasil menyimpan
         return redirect()->route('tugas.index');
     }
 
-    // Show the form for editing the specified task
+    // Menampilkan form untuk mengedit tugas yang sudah ada
     public function edit(Tugas $tugas)
     {
+        // Mengembalikan tampilan form edit tugas dengan data tugas yang akan diedit
         return view('tugas.edit', compact('tugas'));
     }
 
-    // Update the specified task in storage
+    // Mengupdate tugas yang sudah ada setelah diedit
     public function update(Request $request, Tugas $tugas)
     {
-        // Validate input data
+        // Validasi inputan yang baru
         $validated = $request->validate([
-            'judul_tugas' => 'required|string|max:255',
+            'judul_tugas' => 'required|string|max:32',
+            'deskripsi' => 'nullable|string|max:64', // Deskripsi opsional
             'deadline' => 'required|date',
-            'status' => 'required|in:belum,selesai',
+            'status' => 'required|in:belum,selesai', // Validasi status
         ]);
 
-        // Update the task
+        // Jika status diubah menjadi 'selesai', update statusnya
+        if ($request->status == 'selesai') {
+            $tugas->status = 'selesai';
+        }
+
+        // Update data tugas yang sudah ada
         $tugas->update($validated);
 
-        // Redirect to the task index
+        // Redirect kembali ke halaman tugas setelah berhasil diupdate
         return redirect()->route('tugas.index');
     }
 
-    // Remove the specified task from storage
+    // Fungsi untuk menghapus tugas dari database
     public function destroy(Tugas $tugas)
     {
+        // Menghapus data tugas dari database
         $tugas->delete();
+
+        // Redirect ke halaman daftar tugas setelah berhasil menghapus
+        return redirect()->route('tugas.index');
+    }
+
+    // Fungsi untuk menandai tugas sebagai selesai
+    public function selesaikan(Tugas $tugas)
+    {
+        // Update status tugas menjadi 'selesai'
+        $tugas->status = 'selesai';
+        $tugas->save(); // Simpan perubahan status ke database
+
+        // Redirect ke halaman daftar tugas setelah selesai
         return redirect()->route('tugas.index');
     }
 }

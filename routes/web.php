@@ -3,23 +3,27 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TugasController;
 
-// Show all tasks
+// Menampilkan semua tugas
+Route::get('/', [TugasController::class, 'index'])->name('tugas.index');
 Route::get('/tugas', [TugasController::class, 'index'])->name('tugas.index');
 
-// Show form to create a new task
+// Menampilkan form untuk menambah tugas baru
 Route::get('/tugas/create', [TugasController::class, 'create'])->name('tugas.create');
 
-// Store a newly created task
+// Menyimpan tugas yang baru dibuat
 Route::post('/tugas', [TugasController::class, 'store'])->name('tugas.store');
 
-// Show a specific task (optional)
-Route::get('/tugas/{tugas}', [TugasController::class, 'show'])->name('tugas.show');
+// Menampilkan detail tugas tertentu (optional)
+// Route::get('/tugas/{tugas}', [TugasController::class, 'show'])->name('tugas.show');
 
-// Show form to edit an existing task
+// Menampilkan form untuk mengedit tugas yang sudah ada
 Route::get('/tugas/{tugas}/edit', [TugasController::class, 'edit'])->name('tugas.edit');
 
-// Update an existing task
+// Mengupdate tugas yang sudah ada
 Route::put('/tugas/{tugas}', [TugasController::class, 'update'])->name('tugas.update');
 
-// Delete a task
+// Menghapus tugas
 Route::delete('/tugas/{tugas}', [TugasController::class, 'destroy'])->name('tugas.destroy');
+
+// Menandai tugas sebagai selesai
+Route::put('/tugas/{tugas}/selesaikan', [TugasController::class, 'selesaikan'])->name('tugas.selesaikan');

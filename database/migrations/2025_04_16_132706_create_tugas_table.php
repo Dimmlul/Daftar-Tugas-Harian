@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tugas', function (Blueprint $table) {
             $table->id();
             $table->string('judul_tugas');
-            $table->text('deskripsi')->nullable();
+            $table->text('deskripsi')->nullable(); // Deskripsi tugas bisa kosong | Opsional
             $table->date('deadline');
             $table->enum('status', ['belum', 'selesai']);
             $table->timestamps();

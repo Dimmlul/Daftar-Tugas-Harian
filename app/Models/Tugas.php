@@ -14,8 +14,7 @@ class Tugas extends Model
         'deadline',
         'status',
     ];
-    // Cast the 'deadline' field to a Carbon instance (datetime)
     protected $casts = [
-        'deadline' => 'datetime',  // Automatically cast 'deadline' to a Carbon object  --> buat fe
+        'deadline' => 'date', // Tanggal deadline akan otomatis di-cast ke objek date. Kalo ga, nanti error jadi invalid date di fe (?)
     ];
 }
