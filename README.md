@@ -41,7 +41,9 @@ Untuk menjalankan aplikasi di localhost pada port 8000:
 php artisan serve
 ```
 
-## 📷 Screenshoot
+--- 
+
+# 📷 Screenshoot
 
 ![demo](/public/demo.png)
 
